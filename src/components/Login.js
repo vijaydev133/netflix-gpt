@@ -1,10 +1,35 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./Header";
+import { checkValidDataSignIn, checkValidDataSignUp } from "../utils/Validate";
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const fullName = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
+
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const handleToggleSignIn = () => {
     setIsSignUp(!isSignUp);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let error;
+    // console.log();
+    // console.log(email.current.value, password.current.value);
+    if (isSignUp) {
+      error = checkValidDataSignUp(
+        email.current.value,
+        password.current.value,
+        fullName.current.value
+      );
+    } else {
+      error = checkValidDataSignIn(email.current.value, password.current.value);
+    }
+    // console.log(error);
+    setErrorMessage(error);
   };
   return (
     <div className="relative">
@@ -22,22 +47,29 @@ const Login = () => {
         </h1>
         {isSignUp && (
           <input
+            ref={fullName}
             type="text"
-            placeholder="Username"
+            placeholder="Fullname"
             className="bg-[#333] p-3 rounded-md m-2 w-full"
           />
         )}
         <input
+          ref={email}
           type="email"
           placeholder="Email or phone number"
           className="bg-[#333] p-3 rounded-md m-2 w-full"
         />
         <input
+          ref={password}
           type="password"
           placeholder="password"
           className="bg-[#333] rounded-md p-3 m-2 w-full"
         />
-        <button className="p-4 rounded-md font-serif font-bold  mx-2 my-4 bg-[#e50914;]  w-full">
+        <p className="text-red-700 font-bold mx-2">{errorMessage}</p>
+        <button
+          onClick={handleSubmit}
+          className="p-4 rounded-md font-serif font-bold  mx-2 my-4 bg-[#e50914;]  w-full"
+        >
           {!isSignUp ? "Sign In" : "Sign Up"}
         </button>
         {!isSignUp && (
